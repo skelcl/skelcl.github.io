@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="index.html#">SkelCL</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li><a href="index.html#about">About</a></li>
+                            <li><a href="index.html#getting">Getting SkelCL</a></li>
+                            <li><a href="index.html#documentation">Documentation</a></li>
+                            <li><a href="index.html#examples">Examples</a></li>
+                            <li><a href="index.html#publications">Publications</a></li>
+                            <li><a href="index.html#contact">Contact</a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+
+          <!-- Main hero unit for a primary marketing message or call to action -->
+          <div class="hero-unit">
+            <div class="row">
+              <div class="span12">
+                <h1>SkelCL <span style="font-size: 50%">&ndash; A Skeleton Library for Heterogeneous Systems</span></h1>
+
+                <div class="row">
+                  <div class="span4" style="margin-top: 1em;">
+                    <p>SkelCL is a library providing high-level abstractions to alleviate programming of modern parallel heterogeneous systems comprising of multi-core CPUs and GPUs.</p>
+                    <p>It is built on top of the <a href="http://www.khronos.org/opencl/">OpenCL standard</a> and offers pre-implemented recurring computation and communication patterns (called <em>skeletons</em>) which greatly simplify parallel programming.</p>
+                    <p>SkelCL is a research project currently developed by <a href="http://www.uni-muenster.de/PVS/en/mitarbeiter/steuwer.html">Michel Steuwer</a> and others at the <a href="http://pvs.uni-muenster.de/pvs">research group parallel and distributed systems</a> at the <a href="http://www.uni-muenster.de/en">University of Münster</a>, Germany.</p>
+                    <a class="btn btn-primary btn-large" href="index.html#about">Learn more &raquo;</a>
+                    <a class="btn btn-primary btn-large" href="index.html#getting">Get SkelCL &raquo;</a></p>
+                  </div> <!-- /span5 -->
+                  <div class="span7" style="margin-top: 1em;">
+                    <pre><code><span class="include">#include</span> <span class="include-arg">&lt;SkelCL/SkelCL.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Zip.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Reduce.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Vector.h&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> skelcl;
+<span class="type">int</span> <span class="func-def">main</span>() {
+  skelcl::<span class="func">init</span>(); <span class="comment">// initialize SkelCL</span>
+
+  <span class="comment">// specify calculations using parallel patterns (skeletons):</span>
+  Zip&lt;<span class="type">int</span>(<span class="type">int</span>,<span class="type">int</span>)&gt; <span class="var-def">mult</span>(<span class="string">"int func(int x, int y){ return x*y; }"</span>);
+  Reduce&lt;<span class="type">int</span>(<span class="type">int</span>)&gt;   <span class="var-def">sum</span>(<span class="string">"int func(int x, int y){ return x+y; }"</span>, <span class="string">"0"</span>);
+
+  Vector&lt;<span class="type">int</span>&gt; <span class="var-def">A</span>(1024);      Vector&lt;<span class="type">int</span>&gt; <span class="var-def">B</span>(1024); <span class="comment">// create and fill vectors</span>
+  <span class="func">init</span>(<span class="var">A</span>.<span class="func">begin</span>(), <span class="var">A</span>.<span class="func">end</span>()); <span class="func">init</span>(<span class="var">B</span>.<span class="func">begin</span>(), <span class="var">B</span>.<span class="func">end</span>());
+
+  Vector&lt;<span class="type">int</span>&gt; <span class="var-def">C</span> = <span class="var, func">sum</span>( <span class="var, func">mult</span>(<span class="var">A</span>, <span class="var">B</span>) ); <span class="comment">// perform calculation in parallel</span>
+
+  std::cout &lt;&lt; "Dot product: " &lt;&lt; <span class="var">C</span>.<span class="func">front</span>() &lt;&lt; std::endl; <span class="comment">// access result</span>
+}</code></pre>
+                    <h5 style="text-align: center;">Computation of the dot product of two vectors using SkelCL</h5>
+                  </div> <!-- /span6 -->
+                </div> <!-- /row -->
+              </div> <!-- /span12 -->
+            </div> <!-- /row -->
+          </div> <!-- /hero-unit -->
+
+          <section id="aboutSection">
+            <a class="anchor" id="about"></a>
+            <div class="row">
+              <div class="span12">
+                <h2>About SkelCL</h2>
+                <p>SkelCL is a library providing high-level abstractions for alleviated programming of modern parallel heterogeneous systems.</p>
+
+                <p>Programming modern heterogeneous systems comprising of multi-core CPUs, GPUs, etc. is complex and error-prone. Existing programming approaches, like CUDA or OpenCL, are intrinsically low-level. Handling of multiple compute devices is complicated and requires manually data movement between them.</p>
+
+                <p>The SkelCL library is built on top of the OpenCL standard and offers pre-implemented recurring computation and communication patterns (called skeletons) which greatly simplify programming for modern heterogeneous systems.</p>
+
+                <p>The library also provides an abstract vector data type and a high-level data (re)distribution mechanism to shield the programmer from the low-level data transfers between the system's main memory and multiple compute devices.</p>
+
+                <p>SkelCL is a research project currently developed by Michel Steuwer and others at the research group parallel and distributed systems at University of Münster which is located in Germany.</p>
+              </div> <!-- /span12 -->
+            </div><!-- /row -->
+          </section>
+
+          <section id="gettingSection">
+            <a class="anchor" id="getting"></a>
+            <a class="anchor" id="documentation"></a>
+            <div class="row">
+              <div class="span6">
+                <h2>Getting SkelCL</h2>
+                <p>The source code of SkelCL is available at <a href="https://github.com/skelcl/skelcl">Gitub: https://github.com/skelcl/skelcl</a>.
+                Instructions for building SkelCL can be found at <a href="https://github.com/skelcl/skelcl/wiki">https://github.com/skelcl/skelcl/wiki</a>.
+                SkelCL has been build and tested successfully on recent Ubuntu systems, Mac OS X Mavericks as well as Windows 7 and 8.
+                A set of examples can be found in the <a href="https://github.com/skelcl/skelcl/tree/master/examples"><code>examples</code></a> folder.
+                If you have trouble building or using SkelCL feel free to contact the author <a href="index.html#contact">Michel Steuwer</a>.</p>
+              </div> <!-- /span6 -->
+              <div class="span6">
+                <h2>Documentation</h2>
+                <p>A documentation of SkelCL is available at <a href="doc/index.html">http://skelcl.uni-muenster.de/doc</a>.
+                </p>
+                <h2>Licensing</h2>
+                <p>SkelCL is available under multiple licenses. The licenses are GPLv3 as well as a less restrictive license for non-commercial academic use. If you are interested in using SkelCL under different license terms please contact the author <a href="index.html#contact">Michel Steuwer</a>. For more details about the licensing please see the <a href="https://github.com/skelcl/skelcl/blob/master/LICENSE.txt"><code>LICENSE.txt</code></a> file.</p>
+
+              </div> <!-- /span6 -->
+            </div> <!-- /row -->
+          </section>
+          
+          <section id="examplesSection">
+            <a class="anchor" id="examples"></a>
+          <h2>Examples</h2>
+          <div id="myCarousel" class="carousel slide" data-interval="">
+            <!-- Carousel items -->
+            <div class="carousel-inner">
+
+              <div class="item">
+                <div class="row">
+                  <div class="span10 offset1">
+                    <pre><code><span class="include">#include</span> <span class="include-arg">&lt;SkelCL/SkelCL.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Zip.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Reduce.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/vector.h&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> skelcl;
+<span class="type">int</span> <span class="func-def">main</span>() {
+  skelcl::<span class="func">init</span>(); <span class="comment">// initialize skelcl</span>
+
+  <span class="comment">// specify calculations using parallel patterns (skeletons):</span>
+  Zip&lt;<span class="type">int</span>(<span class="type">int</span>,<span class="type">int</span>)&gt; <span class="var-def">mult</span>(<span class="string">"int func(int x, int y){ return x*y; }"</span>);
+  Reduce&lt;<span class="type">int</span>(<span class="type">int</span>)&gt;   <span class="var-def">sum</span>(<span class="string">"int func(int x, int y){ return x+y; }"</span>, <span class="string">"0"</span>);
+
+  Vector&lt;<span class="type">int</span>&gt; <span class="var-def">a</span>(1024);      Vector&lt;<span class="type">int</span>&gt; <span class="var-def">b</span>(1024); <span class="comment">// create and fill vectors</span>
+  <span class="func">init</span>(<span class="var">a</span>.<span class="func">begin</span>(), <span class="var">a</span>.<span class="func">end</span>()); <span class="func">init</span>(<span class="var">b</span>.<span class="func">begin</span>(), <span class="var">b</span>.<span class="func">end</span>());
+
+  Vector&lt;<span class="type">int</span>&gt; <span class="var-def">c</span> = <span class="var, func">sum</span>( <span class="var, func">mult</span>(<span class="var">a</span>, <span class="var">b</span>) ); <span class="comment">// perform calculation in parallel</span>
+
+  std::cout &lt;&lt; "dot product: " &lt;&lt; <span class="var">c</span>.<span class="func">front</span>() &lt;&lt; std::endl; <span class="comment">// access result</span>
+}</code></pre>
+                    <h5 style="text-align: center;">Computation of the dot product of two vectors using SkelCL</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="active item">
+                <div class="row">
+                  <div class="span10 offset1">
+                    <pre><code><span class="include">#include</span> <span class="include-arg">&lt;SkelCL/SkelCL.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Zip.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Vector.h&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> skelcl;
+<span class="type">int</span> <span class="func-def">main</span>() {
+  skelcl::<span class="func">init</span>(); <span class="comment">// initialize skelcl</span>
+
+  <span class="comment">// specify saxpy calculations using the zip skeleton:</span>
+  Zip&lt;<span class="type">float</span>(<span class="type">float</span>,<span class="type">float</span>)&gt; <span class="var-def">saxpy</span>(<span class="string">"float func(float x, float y, float a){ return a*x + y; }"</span>);
+
+  Vector&lt;<span class="type">float</span>&gt; <span class="var-def">X</span>(1024);      Vector&lt;<span class="type">float</span>&gt; <span class="var-def">Y</span>(1024); <span class="comment">// create and fill vectors</span>
+  <span class="func">init</span>(<span class="var">X</span>.<span class="func">begin</span>(), <span class="var">X</span>.<span class="func">end</span>()); <span class="func">init</span>(<span class="var">Y</span>.<span class="func">begin</span>(), <span class="var">Y</span>.<span class="func">end</span>());
+  <span class="type">float</span> <span class="var-def">a</span> = 2.5f;
+
+ <span class="comment">// pass a as an additional argument to the skeleton and store the result back in Y</span>
+  saxpy</span>( <span class="func">out</span>(<span class="var">Y</span>), <span class="var">X</span>, <span class="var">Y</span>, <span class="var">a</span> );
+
+  print(<span class="var">Y</span>.<span class="func">begin</span>(), <span class="var">Y</span>.<span class="func">end</span>()); <span class="comment">// access result</span>
+}</code></pre>
+                    <h5 style="text-align: center;">BLAS saxpy Computation using SkelCL</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="row">
+                  <div class="span10 offset1">
+                    <pre><code><span class="include">#include</span> <span class="include-arg">&lt;SkelCL/SkelCL.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/AllPairs.h&gt;</span>
+<span class="include">#include</span> <span class="include-arg">&lt;SkelCL/Matrix.h&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> skelcl;
+<span class="type">int</span> <span class="func-def">main</span>() {
+  skelcl::<span class="func">init</span>(); <span class="comment">// initialize skelcl</span>
+
+  <span class="comment">// specify building blocks of the dot product (the zip and reduce skeletons):</span>
+  Zip&lt;<span class="type">float</span>(<span class="type">float</span>,<span class="type">float</span>)&gt; <span class="var-def">mult</span>(<span class="string">"float func(float x, float y){ return x*y; }"</span>);
+  Reduce&lt;<span class="type">float</span>(<span class="type">float</span>)&gt;     <span class="var-def">sum</span>(<span class="string">"float func(float x, float y){ return x+y; }"</span>, <span class="string">"0.0f"</span>);
+
+  <span class="comment">// create allpairs skeleton customized with the building blocks of the dot product:</span>
+  Allpairs&lt;<span class="type">float</span>(<span class="type">float</span>,<span class="type">float</span>)&gt; mm(sum, mult);
+
+  <span class="comment">// create and fill matrices</span>
+  Matrix&lt;<span class="type">float</span>&gt; <span class="var-def">A</span>(N, D); <span class="func">init</span>(<span class="var">A</span>.<span class="func">begin</span>(), <span class="var">A</span>.<span class="func">end</span>());
+  Matrix&lt;<span class="type">float</span>&gt; <span class="var-def">B</span>(D, M); <span class="func">init</span>(<span class="var">B</span>.<span class="func">begin</span>(), <span class="var">B</span>.<span class="func">end</span>());
+
+  <span class="keyword">auto</span> <span class="var-def">C</span> = <span class="var, func">mm</span>( <span class="var">A</span>, <span class="var">B</span> ); <span class="comment">// perform matrix multiplication in parallel</span>
+
+  <span class="func">print</span>(<span class="var">C</span>.<span class="func">begin</span>(), <span class="var">C</span>.<span class="func">end</span>()); // print result
+}</code></pre>
+                    <h5 style="text-align: center;">Matrix multiplication computation using SkelCL</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Carousel nav -->
+            <a class="carousel-control left" href="index.html#myCarousel" data-slide="prev">&lsaquo;</a>
+            <a class="carousel-control right" href="index.html#myCarousel" data-slide="next">&rsaquo;</a>
+          </div>
+          </section>
+
+          <section id="publicationsSection">
+            <a class="anchor" id="publications"></a>
+            <h2>Publications</h2>
+            <h5><time>2014</time>:</h5>
+            <ul>
+              <li>
+              <a href="http://www.exastencils.org/histencils/">
+              S. Breuer, M. Steuwer, and S. Gorlatch: <em>Extending the SkelCL Skeleton
+                Library for Stencil Computations on Multi-GPU Systems</em>. In Proceedings of the
+   1st International Workshop on High-Performance Stencil Computations
+   (HiStencils), 2014, Vienna, Austria.</a>
+              </li>
+              <li>
+              <a href="http://eu.wiley.com/WileyCDA/WileyTitle/productCd-0470936908.html">C. Kessler, S. Gorlatch, J. Emmyren, U. Dastgeer, M. Steuwer, and P. Kegel: <em>Skeleton Programming for Portable Many-Core Computing</em>. Book chapter in Programming Multi-core and Many-core Computing Systems edited by S. Pllana and F. Xhafa, New York, USA, Wiley Interscience (to be published).</a>
+              </li>
+            </ul>
+            <h5><time>2013</time>:</h5>
+            <ul>
+              <li>
+              <a href="http://dx.doi.org/10.1007/s10766-013-0265-6">
+              M. Steuwer, M. Friese, S. Albers, and S. Gorlatch: <em>Introducing and
+                Implementing the Allpairs Skeleton for Programming Multi-GPU Systems</em>. In
+              International Journal of Parallel Programming, 2013, Springer.</a>
+              </li>
+              <li>
+              <a href="http://dx.doi.org/10.1007/978-3-642-39958-9_24">
+              M. Steuwer and S. Gorlatch: <em>SkelCL: Enhancing OpenCL for High-Level
+                Programming of Multi-GPU Systems</em>. In Parallel Computing Technologies - 12th International Conference (PaCT) Proceedings, 2013, St. Petersburg, Russia.</a>
+              </li>
+              <li>
+              <a href="http://dx.doi.org/10.1016/j.procs.2013.05.239">
+                M. Steuwer and S. Gorlatch: <em>High-Level Programming for Medical Imaging on Multi-GPU Systems using the SkelCL Library</em>. In Procedia Computer Science, Volumne 18, Pages 749-758, 2013, Elsevier.</a>
+              </li>
+              <li>
+              <a href="http://ebooks.iospress.nl/publication/35303">
+              P. Kegel, M. Steuwer, and, S. Gorlatch: <em>Uniform High-Level Programming of
+   Many-Core and Multi-GPU Systems</em>. In Transition of HPC Towards Exascale
+ Computing, 2013, IOS Press.</a>
+              </li>
+            </ul>
+            <h5><time>2012</time>:</h5>
+            <ul>
+              <li>
+              <a href="http://ebooks.iospress.nl/publication/7555">
+                M. Steuwer, P. Kegel, and S. Gorlatch: <em>A High-Level Programming Approach for Distributed Systems with Accelerators</em>. In New Trends in Software Methodologies, Tools and Techniques - Proceedings of the Eleventh SoMeT'12, Genoa, Italy, 2012.</a>
+              </li>
+              <li>
+                <a href="http://link.springer.com/chapter/10.1007/978-3-642-36949-0_41">
+                M. Steuwer, S. Gorlatch, M. Bu&szlig;, and, S. Breuer: <em>Using the SkelCL Library for High-Level GPU Programming of 2D Applications</em>. In Euro-Par 2012: Parallel Processing Workshops, Rhodes Island, Greece, 2012.</a>
+              </li>
+              <li>
+                <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6270864">
+              M. Steuwer, P. Kegel, and S. Gorlatch: <em>Towards High-Level Programming of Multi-GPU Systems Using the SkelCL Library</em>. In 2012 IEEE International Symposium on Parallel and Distributed Processing Workshops (IPDPSW), Shanghai, China, 2012.</a>
+              </li>
+            </ul>
+            <h5><time>2011<time>:</h5>
+            <ul>
+              <li>
+                <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6008967">M. Steuwer, P. Kegel, and S. Gorlatch: <em>SkelCL - A Portable Skeleton Library for High-Level GPU Programming</em>. In 2011 IEEE International Symposium on Parallel and Distributed Processing Workshop and Phd Forum (IPDPSW), Anchorage, USA, 2011.</a>
+              </li>
+            </ul>
+          </section>
+
+          <section id="contactSection">
+            <a class="anchor" id="contact"></a>
+            <h2>Contact</h2>
+            <address>
+              <i class="icon-user"></i> <strong>Michel Steuwer</strong><br>
+              <i class="icon-envelope"></i> <a href="mailto:michel.steuwer@uni-muenster.de">michel.steuwer@uni-muenster.de</a>
+            </address>
+          </section>
+
+          <hr>
+
+          <footer>
+            <p>&copy; Michel Steuwer 2015</p>
+          </footer>
+
+        </div> <!-- /container -->
+
+        <!--script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script-->
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+
+        <script src="js/main.js"></script>
+    </body>
+</html>
